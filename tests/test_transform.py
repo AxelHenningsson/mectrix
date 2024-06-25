@@ -5,23 +5,20 @@ import mectrix
 
 class TestTransform(unittest.TestCase):
 
-
     def setUp(self):
         pass
 
-
-    def test_stress_tensor_to_voigt(self):
+    def test_voigt_to_stress_tensor(self):
         stress_voigt = np.array([[1, 2, 3, 4, 5, 6], [-1, -1, -1, -1, -1, -1]]).T
         stress_tensor =  mectrix.transforms.voigt_to_stress_tensor(stress_voigt)
 
-        self.assertTrue(stress_tensor.shape==(3, 3, 2))
+        self.assertTrue(stress_tensor.shape == (3, 3, 2))
         self.assertTrue( np.allclose(stress_tensor[:,:,0] , np.array([ [1, 6, 5],
                                                                        [6, 2, 4],
                                                                        [5, 4, 3] ])) )
         self.assertTrue( np.allclose(stress_tensor[:,:,1] , -np.ones((3,3))) )
 
-
-    def test_strain_tensor_to_voigt(self):
+    def test_voigt_to_strain_tensor(self):
         strain_voigt = np.array([[1, 2, 3, 4*2., 5*2., 6*2.], [-1, -1, -1, -1*2., -1*2., -1*2.]]).T
         strain_tensor =  mectrix.transforms.voigt_to_strain_tensor(strain_voigt)
 
@@ -31,13 +28,18 @@ class TestTransform(unittest.TestCase):
                                                                        [5, 4, 3] ])) )
         self.assertTrue( np.allclose(strain_tensor[:,:,1] , -np.ones((3,3))) )
 
+    def test_strain_tensor_to_voigt(self):
+        strain_voigt = np.array([[1, 2, 3, 4*2., 5*2., 6*2.], [-1, -1, -1, -1*2., -1*2., -1*2.]]).T
+        strain_tensor =  mectrix.transforms.voigt_to_strain_tensor(strain_voigt)
+        strain_voigt2 =  mectrix.transforms.strain_tensor_to_voigt(strain_tensor)
+        self.assertTrue( np.allclose(strain_voigt, strain_voigt2) )
 
-    def test_voigt_to_strain_tensor(self):
-        pass
+    def test_stress_tensor_to_voigt(self):
+        stress_voigt = np.array([[1, 2, 3, 4*2., 5*2., 6*2.], [-1, -1, -1, -1*2., -1*2., -1*2.]]).T
+        stress_tensor =  mectrix.transforms.voigt_to_strain_tensor(stress_voigt)
+        stress_voigt2 =  mectrix.transforms.strain_tensor_to_voigt(stress_tensor)
+        self.assertTrue( np.allclose(stress_voigt, stress_voigt2) )
 
-
-    def test_voigt_to_stress_tensor(self):
-        pass
 
 if __name__ == '__main__':
     unittest.main()
